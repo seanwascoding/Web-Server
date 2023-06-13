@@ -116,7 +116,7 @@ wss.on('connection', ws => {
                     console.log(err)
                     ws.send(err)
                 }
-                else if (result) {
+                else if (result.length > 0) {
                     //?
                     console.log("exist")
 
@@ -140,7 +140,7 @@ wss.on('connection', ws => {
                             message_temp.signal = "error"
                             ws.send(JSON.stringify(message_temp))
                         }
-                        else if (result) {
+                        else if (result.length > 0) {
                             console.log("successful")
                             message_temp.signal = "successful create"
                             ws.send(JSON.stringify(message_temp))
@@ -155,9 +155,11 @@ wss.on('connection', ws => {
             console.log("working to join party")
             json_temp.signal = "working to join party"
             json_temp_host.signal = "name from client"
+            var state = true
             //! send name to host
             wss.clients.forEach((client) => {
                 if (client !== ws && client.readyState === socketserver.OPEN) {
+                    //? host
                     if (message_temp[Object.keys(message_temp)[0]] == map.get(client)) {
                         //? client data
                         json_temp.user = message_temp['name']
@@ -167,9 +169,9 @@ wss.on('connection', ws => {
                         //? team group
                         map.set(ws, client)
 
+                        console.log("successful")
                         //? send data (client)
                         ws.send(JSON.stringify(json_temp))
-
                         //? client data
                         console.log("(client)joining:", json_temp_host)
 
@@ -184,6 +186,27 @@ wss.on('connection', ws => {
                         console.log("(client)joining:", json_temp_host)
 
                         i += 1
+
+                        //? other client
+                        // wss.clients.forEach((other_clients) => {
+                        //     if (other_clients !== ws && other_clients !== client && client.readyState === socketserver.OPEN) {
+                        //         if (map.get(other_clients) === client) {
+                        //             pool.query('SELECT * FROM Team WHERE room_key = ?', [message_temp['1']], (err, result) => {
+                        //                 if (err) {
+                        //                     console.log(err)
+                        //                 }
+                        //                 else if (result.length > 0) {
+                        //                     console.log('other client')
+                        //                     result.forEach((data) => {
+                        //                         json_temp.user = data.username
+                        //                         json_temp.state = 'ready'
+                        //                         other_clients.send(JSON.stringify(json_temp))
+                        //                     })
+                        //                 }
+                        //             })
+                        //         }
+                        //     }
+                        // })
                     }
                 }
             });
@@ -236,7 +259,18 @@ wss.on('connection', ws => {
                 })
             }
             else if (message_temp['4'] == "defend") {
-
+                if(parseFloat(message_temp['value']) > 50){
+                    console.log("working to defend:")
+                    json_temp_monster.signal = "defend"
+                    json_temp_monster.value = "防禦成功"
+                    ws.send(JSON.stringify(json_temp_monster))
+                }
+                else{
+                    console.log("fail to defend:")
+                    json_temp_monster.signal = "defend"
+                    json_temp_monster.value = "防禦失敗"
+                    ws.send(JSON.stringify(json_temp_monster))
+                }
             }
             else {
                 console.log("4:error")
@@ -270,22 +304,24 @@ wss.on('connection', ws => {
     })
     //! disconnected
     ws.on('close', () => {
-        try {
-            if (map.get(ws) !== "" && map.get(ws) !== undefined) {
-                if (map.get(ws).readyState === socketserver.OPEN) {
-                    console.log("")
-                }
-                else {
-                    console.log("error control")
-                }
-            }
-            else {
-                console.log("no pair group")
-            }
-        } catch (err) {
-            console.log(err)
-        }
-        map.delete(ws)
+        //! 需要再調整
+        // try {
+        //     if (map.get(ws) !== "" && map.get(ws) !== undefined) {
+        //         if (map.get(ws).readyState === socketserver.OPEN) {
+        //             console.log("")
+        //         }
+        //         else {
+        //             console.log("error control")
+        //         }
+        //     }
+        //     else {
+        //         console.log("no pair group")
+        //     }
+        // } catch (err) {
+        //     console.log(err)
+        // }
+
+        // map.delete(ws)
         console.log("client disconnected")
 
         //? TO DO
