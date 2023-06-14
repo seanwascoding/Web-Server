@@ -272,8 +272,20 @@ wss.on('connection', ws => {
                     ws.send(JSON.stringify(json_temp_monster))
                 }
             }
+            else if(message_temp['4'] == "loss"){
+                const json_temp_loss = {}
+                json_temp_loss.signal="loss"
+                console.log("work")
+                ws.send(JSON.stringify(json_temp_loss))
+                wss.clients.forEach((client) => {
+                    if (client !== ws && client.readyState === socketserver.OPEN && map_2[client] == message_temp['key']) {
+                        client.send(JSON.stringify(json_temp_loss))
+                    }
+                })
+            }
             else {
                 console.log("4:error")
+                console.log(message_temp['4'])
             }
         }
         //! replace
