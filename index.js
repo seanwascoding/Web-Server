@@ -134,13 +134,13 @@ wss.on('connection', ws => {
                 }
                 else {
                     //?
-                    pool.query('INSERT INTO Team (username, room_key) VALUES (?, ?)', [name, message_temp['0']], (err) => {
+                    pool.query('INSERT INTO Team (username, room_key) VALUES (?, ?)', [name, message_temp['0']], (err, result) => {
                         if (err) {
                             console.log(err)
                             message_temp.signal = "error"
                             ws.send(JSON.stringify(message_temp))
                         }
-                        else if (result.length > 0) {
+                        else{
                             console.log("successful")
                             message_temp.signal = "successful create"
                             ws.send(JSON.stringify(message_temp))
@@ -259,22 +259,22 @@ wss.on('connection', ws => {
                 })
             }
             else if (message_temp['4'] == "defend") {
-                if(parseFloat(message_temp['value']) > 50){
+                if (parseFloat(message_temp['value']) > 50) {
                     console.log("working to defend:")
                     json_temp_monster.signal = "defend"
                     json_temp_monster.value = "防禦成功"
                     ws.send(JSON.stringify(json_temp_monster))
                 }
-                else{
+                else {
                     console.log("fail to defend:")
                     json_temp_monster.signal = "defend"
                     json_temp_monster.value = "防禦失敗"
                     ws.send(JSON.stringify(json_temp_monster))
                 }
             }
-            else if(message_temp['4'] == "loss"){
+            else if (message_temp['4'] == "loss") {
                 const json_temp_loss = {}
-                json_temp_loss.signal="loss"
+                json_temp_loss.signal = "loss"
                 console.log("work")
                 ws.send(JSON.stringify(json_temp_loss))
                 wss.clients.forEach((client) => {
