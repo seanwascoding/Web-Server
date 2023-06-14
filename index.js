@@ -173,7 +173,7 @@ wss.on('connection', ws => {
                         //? send data (client)
                         ws.send(JSON.stringify(json_temp))
                         //? client data
-                        console.log("(client)joining:", json_temp_host)
+                        console.log("(client)joining:", json_temp)
 
                         //? host data
                         json_temp_host.user = message_temp['name']

@@ -17,4 +17,4 @@ INSERT INTO Team (username, room_key)
 VALUES ('sean', 'test');
        
 /* Delete */
-DELETE FROM Team;
+DELETE FROM account_game where username="";
